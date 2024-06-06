@@ -1,0 +1,211 @@
+
+.chatbot-main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 70vh;
+}
+
+textarea {
+    width: 100%;
+    resize: none;
+    background-color: #DFF5FF23;
+    border-radius: 4px;
+    border: none;
+    font-family: "Montserrat", sans-serif;
+    border: 1px solid #DFF5FF;
+}
+
+.output {
+    height: 47vh;
+    margin-bottom: 0.6%;
+    width: 100%;
+    resize: none;
+    background-color: #DFF5FF23;
+    border-radius: 4px;
+    border: none;
+    font-family: "Montserrat", sans-serif;
+    border: 1px solid #DFF5FF;
+    font-size: large;
+    font-weight: 500;
+    padding: 0.75%;
+    overflow-x: auto;
+}
+
+.input {
+    font-size: large;
+    font-weight: 500;
+    color: #DFF5FF;
+    width: 88%;
+    height: 20vh;
+    padding: 0.75%;
+}
+
+.output:focus {
+    outline: none;
+}
+
+.input:focus {
+    outline: 2px solid #DFF5FF;
+}
+
+.button-container {
+    display: flex;
+    width: 100%;
+}
+
+.input-button {
+    margin-left: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 11.5%;
+    border-radius: 4px;
+    border: none;
+    background-color:#DFF5FF;
+    color: black;
+    margin-left: 0.5%;
+}
+
+.input-button:hover {
+    color: #DFF5FF;
+    background-color:black;
+    border: 2px solid #DFF5FF;
+}
+
+.bubble-container {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+}
+
+.bubble {
+    padding: 10px 20px;
+    border-radius: 20px;
+    max-width: 100%;
+    word-wrap: break-word;
+}
+
+.user-message {
+    align-self: flex-end;
+    background-color: #fff;
+    color: #333;
+    border-radius: 8px;
+}
+
+.bot-message {
+    align-self: flex-start;
+    background-color: #333;
+    color: #fff;
+    border-radius: 8px;
+}
+
+.error-message {
+    align-self: center;
+    background-color: #e63946;
+}
+
+.loader {
+    display: flex;
+    gap: 8px;
+}
+
+.loader .dotLoader {
+    width: 8px;
+    height: 8px;
+    background-color: #fff;
+    border-radius: 50%;
+    animation: bounce 0.5s infinite alternate;
+}
+
+.loader .dotLoader:nth-child(2) {
+    animation-delay: 100ms;
+}
+
+.loader .dotLoader:nth-child(3) {
+    animation-delay: 200ms;
+}
+
+@keyframes bounce {
+    100% {
+        translate: 0 -8px; 
+    }
+}
+
+.product-title-chat {
+    text-align: center;
+    background-color: #fff;
+    color: #333;
+    border-radius: 8px;
+    padding: 5px;
+}
+
+.product-disc-chat {
+    text-align: center;
+    background-color: #fff;
+    color: #333;
+    border-radius: 8px;
+    padding: 5px;
+    width: 100%;
+    height: 10vh;
+    margin-top: 8px;
+    padding: 10px;
+}
+
+.product-button-chat {
+    background-color: #fff;
+    color: #333;
+    text-decoration: none;
+    height: 10vh;
+    width: 30%;
+    border-radius: 8px;
+    margin-top: 8px;
+    margin-left: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid transparent;
+    font-size: 1.2rem;
+    font-weight: 500;
+    transition: background-color 0.25s ease-in-out, color 0.25s ease-in-out, border-color 0.25s ease-in-out;
+}
+
+.product-button-chat:hover {
+    color: #fff;
+    background-color: #333;
+    border: 2px solid #fff;
+}
+
+.div-logo-disc {
+    display: flex;
+    align-items: center;
+}
+
+@media only screen and (max-width: 768px) {
+    .chatbot-main {
+        height: 70vh;
+        width: 97vw;
+        position: absolute;
+        top:50%;
+        margin-top: 20px;
+    }
+    .product-disc-chat {
+        height: 16vh;
+    }
+    .product-button-chat {
+        height: 16vh;
+    }
+}
+
+@media only screen and (max-width: 1372px) {
+    .product-disc-chat {
+        height: 16vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .product-button-chat {
+        height: 16vh;
+    }
+}
