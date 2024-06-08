@@ -27,18 +27,10 @@ import realme from '../assets/logos/realme.svg';
 // Loader taken from here: https://www.youtube.com/watch?v=E01XdDQgzDM&ab_channel=DevtoolsTech
 // Langchain taken from a multiple of places.
 function Chat({ products, addToCart }) {
-    // State to hold the current input from the user.
-    const [inputContent, setInputContent] = useState('');
-    // State to hold the chat history.
-    const [chatHistory, setChatHistory] = useState([]);
-    // State to hold the reference to the web worker.
-    const [worker, setWorker] = useState(null);
-    // State to indicate if the chat is waiting for a response.
-    const [isLoading, setIsLoading] = useState(false);
-
-    //Create the lists of the products to send to the llama API.
-    
-
+    const [inputContent, setInputContent] = useState(''); // state for input. That is then sent to webworker (AI script) as quesiton. 
+    const [chatHistory, setChatHistory] = useState([]); // Takes and adds the input then the output to the list in the hook.
+    const [worker, setWorker] = useState(null); // The worker is originally set to null, so the webworker is originally not running.
+    const [isLoading, setIsLoading] = useState(false); // Indicating if the chat is wating for a response. Used so that the loader knows if its supposed to run.
 
     // useEffect to handle the lifecycle of the web worker.
     useEffect(() => {
@@ -48,7 +40,6 @@ function Chat({ products, addToCart }) {
 
         // Setting up a handler for messages received from the worker.
         newWorker.onmessage = (event) => {
-            console.log("Received from worker:", event.data);
             setIsLoading(false); // Turn off loading indicator on response.
             if (event.data.success) {
                 const newOutputContent = event.data.data;
