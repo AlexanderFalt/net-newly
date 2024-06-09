@@ -31,34 +31,36 @@ function App() {
     };
   }, []); 
 
-  // Define addToCart using useCallback to ensure it doesn't change on every render
+  // useCallback så att den inte behöver köras om på varje render.
   const addToCart = useCallback((productToAdd) => {
     setCart(currentCart => {
-        // Check if the cart already contains the product based on id (not productId)
+        // Kollar om cart redan innehåller producten så att man inte kan lägga till den flera gånger. Some kollar om det finns ett tillfälle med den i arrayen.
         const isProductInCart = currentCart.some(item => item.id === productToAdd.id);
         
-        // If the product is not in the cart, add it
+        // Om produkten inte är i cart lägg till den,
         if (!isProductInCart) {
             return [...currentCart, productToAdd];
         } else {
-            // If it is in the cart, return the cart unchanged
+            // Om den är där ändras inget.
             return currentCart;
         }
       });
   }, []);
 
+  //Samma här.
   const removeFromCart = useCallback((productId) => {
-    setCart(currentCart => currentCart.filter(item => item.id !== productId));
+    setCart(currentCart => currentCart.filter(item => item.id !== productId)); // Skapar en ny lista med all föremål så länge de inte matchar productId
   }, []);
 
   useEffect(() => {
-    setCartSize(cart.length)
+    setCartSize(cart.length) // Cart length så att bubblan vid checkout vissar hur många producter det finns i carten.
   }, [cart]);
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      const smartphonesResponse = await fetch('https://dummyjson.com/products/category/smartphones');
-      const smartphonesData = await smartphonesResponse.json();
+  useEffect(() => { // Hämtar produkter från dummyjson
+    const fetchProducts = async () => { // Asynchron
+      const smartphonesResponse = await fetch('https://dummyjson.com/products/category/smartphones'); // Vänta till's promise slutförs 
+      console.log(smartphonesResponse)
+      const smartphonesData = await smartphonesResponse.json(); //
 
       const laptopsResponse = await fetch('https://dummyjson.com/products/category/laptops');
       const laptopsData = await laptopsResponse.json();
@@ -89,11 +91,11 @@ function App() {
         />
       ));
 
-      setProducts([...smartphonesList, ...computersList]);
+      setProducts([...smartphonesList, ...computersList]); // setter products till samling av det jag får av dessa två.
     };
 
     fetchProducts();
-  }, [addToCart]); // Depend on addToCart, which is now stable due to useCallback
+  }, [addToCart]);
 
   const [searchIsPressed, setSearchIsPressed] = useState(true);
   const [navIsPressed, setNavIsPressed] = useState(true);

@@ -24,7 +24,7 @@ function NavBar({ numberOfItems }) {
 }
 
 NavBar.propTypes = {
-    numberOfItems: PropTypes.func.isRequired,
+    numberOfItems: PropTypes.func.isRequired, // function för att see hur många föremål du har i kundvangnen. Finns i app.jsx
   };
 
 export default NavBar;

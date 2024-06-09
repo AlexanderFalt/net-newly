@@ -35,49 +35,46 @@ function Chat({ products, addToCart }) {
     // useEffect to handle the lifecycle of the web worker.
     useEffect(() => {
         // Creating a new web worker instance from a module.
-        const newWorker = new Worker(new URL('../webworker.js', import.meta.url), { type: 'module' });
-        setWorker(newWorker); // Setting the worker in state.
-
-        // Setting up a handler for messages received from the worker.
-        newWorker.onmessage = (event) => {
-            setIsLoading(false); // Turn off loading indicator on response.
-            if (event.data.success) {
-                const newOutputContent = event.data.data;
-                setChatHistory(prevChatHistory => {
-                    // Filtering to add only new messages based on timestamps.
-                    const latestTimestamp = Math.max(...prevChatHistory.map(msg => msg.timestamp || 0));
-                    const newMessages = newOutputContent.previousMessages.filter(msg => msg.timestamp > latestTimestamp);
-                    return [...prevChatHistory, ...newMessages];
+        const newWorker = new Worker(new URL('../webworker.js', import.meta.url), { type: 'module' }); // Javascript module som kör att jag kan använda import/export. URL relativit till nuvarande filen. Detta är en webworker som tar bort arbets kraft från main threaden där olika operationer för till exempel animationer sker. Som gör processen att få ett svar snabbare.
+        setWorker(newWorker); // Setting the worker in state. 
+        newWorker.onmessage = (event) => { // When i get a response from the web worker/AI script.
+            setIsLoading(false); // Turn off loading when you have gotten a response.
+            if (event.data.success) { // If i succesfully have gotten the data run the rest.
+                const newOutputContent = event.data.data; // In the object that is returend the there is a property named data. I want the data in that so: data.data.
+                setChatHistory(prevChatHistory => { // Updating the chat history
+                    // Lägg till nya medelande beroend på time stamps.
+                    const latestTimestamp = Math.max(...prevChatHistory.map(msg => msg.timestamp || 0)); // Maximum time stamp in chat history. To get the latest one. If there is no timestamp it defaults to 0.
+                    const newMessages = newOutputContent.previousMessages.filter(msg => msg.timestamp > latestTimestamp); // checks for new messages in the content i get back from the script these are determind by comparing to the latest current timestamp if msg is newser then add.
+                    return [...prevChatHistory, ...newMessages]; // Adds to together the new messages to the old chat history.
                 });
-            } else {
-                // Handling any errors received from the worker.
+            } else { // If the event.data.sucess is false the create error.
+                // Error handeling.
                 console.error('Error from worker:', event.data.error);
                 setChatHistory(prevChatHistory => [...prevChatHistory, { sender: "Error", content: "Error processing your request. Please try again." }]);
             }
         };
 
-        // Cleanup function to terminate the worker when the component unmounts.
-        return () => newWorker.terminate();
-    }, []); // Empty dependency array means this effect runs only once on mount.
+        return () => newWorker.terminate(); // When the ChatBot component is unmounted then terminate the webwokrer making things not as laggy.
+    }, []); 
 
-    // Handler for changes in the input field.
+    // Updaterar input content baserat på när man skriver i text rutan använder on change i return delen.
     const handleInputChange = (e) => {
         setInputContent(e.target.value);
     };
 
     //Make the lists to send to the AI (cant send functions)
     const makePhoneList = () => {
-        const listToReturn = [];
-        for (let i = 0; i < products.length; i++) {
-            const item = products[i].props.productObject.title;
-            if (products[i].props.productObject.category == "smartphones") {
+        const listToReturn = []; // Skapar tom array att sicka tillbaka
+        for (let i = 0; i < products.length; i++) { // Vanlig for loop.
+            const item = products[i].props.productObject.title; // Titlen för föremålet
+            if (products[i].props.productObject.category == "smartphones") { // If catagory is smartphoens add it
                 listToReturn.push(item);
             }
         }
         return listToReturn;
     }
 
-
+    // Same thing except laptops
     const makeComputerList = () => {
         const listToReturn = [];
         for (let i = 0; i < products.length; i++) {
@@ -91,24 +88,22 @@ function Chat({ products, addToCart }) {
 
     // Handler for the send button click.
     const handleButtonClick = () => {
-        if (worker) {
-            const userMessage = { sender: "User", content: inputContent };
-            const updatedChatHistory = [...chatHistory, userMessage]; // Directly use updated history
-            setChatHistory(updatedChatHistory); // Update state
-            worker.postMessage({
-                baseUrl: "http://localhost:11434",
-                model: "llama2",
-                question: inputContent,
-                history: updatedChatHistory,
-                phoneList: makePhoneList(),
-                computerList: makeComputerList(), // Cant send functions to webworker.
+        if (worker) { // Om workern har startat
+            const userMessage = { sender: "User", content: inputContent }; // använder som object för att kunna för user/AI so att llama får en bättre ide om hur chat history ska see ut.
+            const updatedChatHistory = [...chatHistory, userMessage]; // Updates the chat history to send to the web worker. Använder spread så all medlande i arrayen läggs til i den nya listan.
+            setChatHistory(updatedChatHistory); // Lägger till som dens nya state.
+            worker.postMessage({ // sickar datan till web workern via post message.
+                baseUrl: "http://localhost:11434", // Localhost addressen som ollama körs på.
+                model: "llama2", // Modellen är ollama två som är typ 4gb och en av dom tyngre modellerna detta gör att det är svårt att köra på datorer med svagare CPU's 
+                question: inputContent, // Frågan eller användarens prompt
+                history: updatedChatHistory, // chat historyn är den updaterade chat historin
+                phoneList: makePhoneList(), // Listan av telefonerna
+                computerList: makeComputerList(), // Cant send functions to webworker. Listan av datorerna.
             });
-            setInputContent(''); // Clearing the input field after sending.
-            setIsLoading(true); // Set loading to true when a request is made.
+            setInputContent(''); // Clearing the input field after sending. Noll ställer input content.
+            setIsLoading(true); // Set loading to true when a request is made. Startar laddnings "animationen".
         }
     };
-
-    console.log("Rendering chat history:", chatHistory);
 
     const loader = () => {
         return <div className={styles["loader"]}>
@@ -133,8 +128,8 @@ function Chat({ products, addToCart }) {
     //Check if product is in the response
     const productInResponse = (text) => {
         if (!text) return null;  // Return null if no text is provided
-        text = text.content.toLowerCase();
-        const foundProducts = products.filter(product => text.includes(product.props.productName.toLowerCase()));
+        text = text.content.toLowerCase(); // turning the text to lower case to make things more consistent
+        const foundProducts = products.filter(product => text.includes(product.props.productName.toLowerCase())); // If there is a mention of a product in the text then show that product.
         const getProductLogo = (lowerBrand) => {
             if (lowerBrand.includes("samsung")) return samsung;
             if (lowerBrand.includes("vivo")) return vivo;
@@ -157,17 +152,18 @@ function Chat({ products, addToCart }) {
             if (lowerBrand.includes("realme")) return realme;
             return "assets/logos/default.svg";  // Skapa en default svg
         }
-        return foundProducts.map(product => (
-            <div key={product.props.productName} className={`${styles['bubble-container']} ${styles["bot-message"]}`}>
+        return foundProducts.map(product => ( // Mapping ever product to a jsx element so it shows up in the chat box.
+            <div key={product.props.productName} className={`${styles['bubble-container']} ${styles["bot-message"]}`}> {/*key or the unique identifier is the name of the product all the other stuff is simple html/jsx*/}
                 <div className={`${styles['bubble']}`}>
                     <p className={styles["product-title-chat"]}>{product.props.productName}</p>
                     <div className={styles["div-logo-disc"]}>
                         <p className={styles["product-disc-chat"]}>{product.props.productObject.description}</p>
-                        <button className={styles["product-button-chat"]} onClick={() => addToCart({
+                        <button className={styles["product-button-chat"]} onClick={() => addToCart({ 
                             id: product.props.productId, // Ensure product has an ID
                             name: product.props.productName,
                             price: product.props.newPrice,
                             quantity: 1  // Default quantity, adjust as necessary
+                            // Adds this objekt to the cart. Cart is in the app.jsx higher up in the hiarchy
                         })}>
                             <i className="fa-solid fa-cart-shopping"></i> Add
                         </button>
@@ -179,24 +175,24 @@ function Chat({ products, addToCart }) {
         ));
     };
 
-    const lastIndex = chatHistory.length - 1;
-    const lastMessage = chatHistory.length > 0 ? chatHistory[lastIndex] : null;
+    const lastIndex = chatHistory.length - 1; 
+    const lastMessage = chatHistory.length > 0 ? chatHistory[lastIndex] : null; // : null because chat history is empty when the component is mounted.
 
     // Rendering the chat interface.
     return (
         <main className={styles['chatbot-main']}>
             <div className={styles["output"]}>
-                {/* Displaying the chat history. */}
-                {chatHistory.map((message, index) => (
+                {/* Displaying the chat history */}
+                {chatHistory.map((message, index) => ( // Mapping again for the chatHistory. The messages index is use as a key because its a static list basically never changes under the components mounting.
                     <div key={index} className={`${styles['bubble-container']} ${styles[getMessageStyle(message.sender)]}`}>
                         <div className={`${styles['bubble']}`}>
                             {message.content}
                         </div>     
                     </div>
                 ))}
-                {productInResponse(lastMessage)}
+                {productInResponse(lastMessage)} {/*Checks if there is any product mentioned in the latest message*/}
                 {/* Conditionally display the loading bubble */}
-                {isLoading && (
+                {isLoading && ( // if the loading state is  true then do the loading animation.
                     <div className={`${styles['bubble-container']} ${styles['bot-message']}`} style={{height: "15%", display:"flex", alignItems: "center", justifyContent: "center", marginTop: "4px"}}>
                         <div className={`${styles['bubble']}`}>
                             {loader()}
@@ -220,10 +216,10 @@ function Chat({ products, addToCart }) {
     );
 }
 
-
+// PropTypes
 Chat.propTypes = {
-    products: PropTypes.array.isRequired,
-    addToCart: PropTypes.func.isRequired,
+    products: PropTypes.array.isRequired, // This prop is verified being an array
+    addToCart: PropTypes.func.isRequired, // this prop is verified being a function
 };
 
 export default Chat;

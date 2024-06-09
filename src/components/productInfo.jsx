@@ -23,7 +23,7 @@ import xiaomi from '../assets/logos/xiaomi.svg';
 import realme from '../assets/logos/realme.svg';
 
 function ProductInfo({ addToCart }) {
-    const location = useLocation();
+    const location = useLocation(); // useLocation används för att få tillgång till state som vi ancänder för att få till gång till just det productObjektet vi vill ha.
     const productObject = location.state;
 
     const getProductLogo = (brand) => {
@@ -46,40 +46,39 @@ function ProductInfo({ addToCart }) {
         if (brand.includes("apple")) return apple;
         if (brand.includes("acer")) return acer;
         if (brand.includes("realme")) return realme;
-        return "assets/logos/default.svg";  // Skapa en default svg
+        return "assets/logos/default.svg";  
     }
 
-    if (!productObject) {
+    if (!productObject) { 
         console.error('Product data is not available.');
     }
 
-    console.log(productObject)
-    const [slideIndex, setSlideIndex] = useState(1);
+    const [slideIndex, setSlideIndex] = useState(1); // Orginella sliden som den ska vissa. Slide number 1.
 
-    // Increment or decrement slide index
-    const changeSlide = (n) => {
+    // Ändra slide nummer.
+    const changeSlide = (n) => { //
         setSlideIndex(prev => {
             const newIndex = prev + n;
             const numSlides = document.getElementsByClassName(styles.mySlides).length;
-            if (newIndex > numSlides) return 1;
-            if (newIndex < 1) return numSlides;
+            if (newIndex > numSlides) return 1; // Om newIndex är större än numSlides gå tillbaka till första slide.
+            if (newIndex < 1) return numSlides; // Om newIndex är mindre än numSildes gå tillbaka till sista slide.
             return newIndex;
         });
     };
 
-    // Display the correct slide based on slideIndex
+    // display the correct slide based on slideIndex
     useEffect(() => {
-        const slides = document.getElementsByClassName(styles.mySlides);
-        const dots = document.getElementsByClassName(styles.dot);
-        Array.from(slides).forEach(slide => {
-            slide.style.display = "none";
+        const slides = document.getElementsByClassName(styles.mySlides); // Skapar en HTMLcollection av antalet slides.
+        const dots = document.getElementsByClassName(styles.dot); // Skapar en HTMLcollection av dots.
+        Array.from(slides).forEach(slide => { // Använder Array.from på grund av att man kan inte använda forEach on HTMLcollection så detta undviker det problemet. Med att gör slides till array.
+            slide.style.display = "none"; // Ändrar display till alla föremål i listan till none.
         });
         Array.from(dots).forEach(dot => {
-            dot.className = dot.className.replace(" active", "");
+            dot.className = dot.className.replace("active", ""); // Tror den delen ksk inte funkar helt.
         });
-        if (slides.length > 0) slides[slideIndex - 1].style.display = "flex";
+        if (slides.length > 0) slides[slideIndex - 1].style.display = "flex"; // Gör den sliden som ska vissas synnlig genom att förvandla den till flex.
         if (dots.length > 0) dots[slideIndex - 1].className += " active";
-    }, [slideIndex]);
+    }, [slideIndex]); // Slide index som dependenice
 
     return (
         <div className={styles["main-div"]}>

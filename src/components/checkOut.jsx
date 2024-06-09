@@ -22,10 +22,12 @@ import xiaomi from '../assets/logos/xiaomi.svg';
 import realme from '../assets/logos/realme.svg';
 
 function CheckOut({ products, cart, removeFromCart }) {
-    const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-    const totalPrice = cart.reduce((acc, item) => {
-        const product = products.find(p => p.props.productId === item.id);
-        return product ? acc + (product.props.originalPrice - ((product.props.discount/100) * product.props.originalPrice)) : acc; // Check if product exists
+   
+    const [windowWidth, setWindowWidth] = useState(window.innerWidth); //Har state för fönstrets storlek.
+   
+    const totalPrice = cart.reduce((acc, item) => { // Reduce tar en array och sätter det till ett värde. acc i detta fall det originella värdet 0. Och item är nuvarande objektet i cart.
+        const product = products.find(p => p.props.productId === item.id);  // hittar föremålet och i props.
+        return product ? acc + (product.props.originalPrice - ((product.props.discount/100) * product.props.originalPrice)) : acc; // Hittar priset och sätter det tillsamans med acc. acc är defoult om product inte finns.
     }, 0);
 
     const getProductLogo = (brand) => {
@@ -51,21 +53,19 @@ function CheckOut({ products, cart, removeFromCart }) {
         return "assets/logos/default.svg";  // Skapa en default svg
     }
 
-        // Handling window resize
     useEffect(() => {
-        // Define a function that updates the state with the current window width
+        // Updaterar windowWith till window width.
         const handleResize = () => {
-            console.log('Window resized to:', typeof window.innerWidth);  // Debugging output
             setWindowWidth(window.innerWidth);
         };
     
-        // Call handleResize immediately to set the initial width
-        handleResize();
+        // Får ett start värde till windowWith
+        handleResize(); 
     
-        // Set up the resize event listener
+        // när fönstret ändra storlek kör handleResize functionen.
         window.addEventListener('resize', handleResize);
     
-        // Specify how to clean up after this effect
+        // Tar bort denna event listener när komponenten unmountas.
         return () => {
             window.removeEventListener('resize', handleResize);
         };
@@ -76,10 +76,10 @@ function CheckOut({ products, cart, removeFromCart }) {
             {windowWidth > 768 ? (
                 <main className={styles["cart-container"]}>
                     <div className={`${styles['larg-container']} ${styles['show-product']}`}>
-                        {cart.map((cartItem, index) => {
+                        {cart.map((cartItem, index) => { // Mapping för föremål i cart och förvandlar dom till jsx element.
                             const product = products.find(product => product.props.productId === cartItem.id);
                             if (!product) {
-                                return <div key={index}>Product not found</div>; // Handle missing products gracefully
+                                return <div key={index}>Product not found</div>; 
                             }
                             return (
                                 <div className={styles["product-container"]} key={index}>
@@ -128,7 +128,7 @@ function CheckOut({ products, cart, removeFromCart }) {
                         {cart.map((cartItem, index) => {
                             const product = products.find(product => product.props.productId === cartItem.id);
                             if (!product) {
-                                return <div key={index}>Product not found</div>; // Handle missing products gracefully
+                                return <div key={index}>Product not found</div>; 
                             }
                             return (
                                 <div className={styles["product-container"]} key={index}>
