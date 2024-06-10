@@ -4,7 +4,7 @@
 This project was made using ollama to run llama2 locally and use it as a chatbot. Llama2 is around 4GB and is not really the fastest on low-end computers. In the web worker script there is a timeout for 12 seconds when constructing the chunks, if that time out is reached there will be an error message saying fetch is aborted.
 
 # Link to video of me using the chatbot:
-(-- To be determined –)
+(https://drive.google.com/file/d/1XAj9QQrKjMnexwqd7RmhW_D4BWbyfMbN/view?usp=sharing)
 
 # Linux setup
 ### Install Git if not installed
