@@ -1,7 +1,7 @@
 > [!WARNING]
 > OBS! For running the chatbot you need to install the program locally can’t run it by hosting through github. If you do not want to do that i have included a video of me using that chatbot
 
-This project was made using ollama to run llama2 locally and use it as a chatbot. Llama2 is around 4GB and is not really the fastest on low-end computers. In the web worker script there is a timeout for 12 seconds when constructing the chunks, if that time out is reached there will be an error message saying fetch is aborted.
+This project was made using ollama to run llama3 locally and use it as a chatbot. Llama3 is around 5GB and is not really the fastest on low-end computers. In the web worker script there is a timeout for 12 seconds when constructing the chunks, if that time out is reached there will be an error message saying fetch is aborted.
 
 # Link to video of me using the chatbot:
 https://drive.google.com/file/d/1XAj9QQrKjMnexwqd7RmhW_D4BWbyfMbN/view?usp=sharing
@@ -24,7 +24,7 @@ npm install @langchain/community
 
 ### Install Ollama and pull the model 
 sudo apt-get install ollama <br/>
-sudo ollama pull llama2 <br/>
+sudo ollama pull llama3 <br/>
 ollama start 
 
 ### Run the development server 
@@ -52,7 +52,7 @@ npm install @langchain/community
 
 ### Install Ollama and pull the model 
 brew install ollama <br/>
-sudo ollama pull llama2 <br/>
+sudo ollama pull llama3 <br/>
 ollama start 
 
 ### Run the development server 
@@ -81,7 +81,7 @@ npm install react-router-dom <br/>
 npm install @langchain/community 
 
 ### Run ollama
-ollama pull llama2 <br/>
+ollama pull llama3 <br/>
 ollama start
 
 ### Run the development server
