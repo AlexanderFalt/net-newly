@@ -94,7 +94,7 @@ function Chat({ products, addToCart }) {
             setChatHistory(updatedChatHistory); // Lägger till som dens nya state.
             worker.postMessage({ // sickar datan till web workern via post message.
                 baseUrl: "http://localhost:11434", // Localhost addressen som ollama körs på.
-                model: "llama2", // Modellen är ollama två som är typ 4gb och en av dom tyngre modellerna detta gör att det är svårt att köra på datorer med svagare CPU's 
+                model: "llama3", // Modellen är ollama tre som är typ 5gb och en av dom tyngre modellerna detta gör att det är svårt att köra på datorer med svagare CPU's 
                 question: inputContent, // Frågan eller användarens prompt
                 history: updatedChatHistory, // chat historyn är den updaterade chat historin
                 phoneList: makePhoneList(), // Listan av telefonerna
